@@ -1,0 +1,271 @@
+Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+-------------------------------------------------------------------------------------------------------------------------------
+| Tool Version     : Vivado v.2017.4 (lin64) Build 2086221 Fri Dec 15 20:54:30 MST 2017
+| Date             : Fri Feb 16 18:12:46 2018
+| Host             : excession.phy.bris.ac.uk running 64-bit Scientific Linux release 6.9 (Carbon)
+| Command          : report_power -file top_power_routed.rpt -pb top_power_summary_routed.pb -rpx top_power_routed.rpx
+| Design           : top
+| Device           : xc7a35tcsg324-1
+| Design State     : routed
+| Grade            : commercial
+| Process          : typical
+| Characterization : Production
+-------------------------------------------------------------------------------------------------------------------------------
+
+Power Report
+
+Table of Contents
+-----------------
+1. Summary
+1.1 On-Chip Components
+1.2 Power Supply Summary
+1.3 Confidence Level
+2. Settings
+2.1 Environment
+2.2 Clock Constraints
+3. Detailed Reports
+3.1 By Hierarchy
+
+1. Summary
+----------
+
++--------------------------+--------------+
+| Total On-Chip Power (W)  | 0.254        |
+| Design Power Budget (W)  | Unspecified* |
+| Power Budget Margin (W)  | NA           |
+| Dynamic (W)              | 0.181        |
+| Device Static (W)        | 0.073        |
+| Effective TJA (C/W)      | 4.8          |
+| Max Ambient (C)          | 83.8         |
+| Junction Temperature (C) | 26.2         |
+| Confidence Level         | Low          |
+| Setting File             | ---          |
+| Simulation Activity File | ---          |
+| Design Nets Matched      | NA           |
++--------------------------+--------------+
+* Specify Design Power Budget using, set_operating_conditions -design_power_budget <value in Watts>
+
+
+1.1 On-Chip Components
+----------------------
+
++--------------------------+-----------+----------+-----------+-----------------+
+| On-Chip                  | Power (W) | Used     | Available | Utilization (%) |
++--------------------------+-----------+----------+-----------+-----------------+
+| Clocks                   |     0.024 |       11 |       --- |             --- |
+| Slice Logic              |     0.005 |     8163 |       --- |             --- |
+|   LUT as Logic           |     0.005 |     2907 |     20800 |           13.98 |
+|   Register               |    <0.001 |     4210 |     41600 |           10.12 |
+|   CARRY4                 |    <0.001 |      121 |      8150 |            1.48 |
+|   LUT as Shift Register  |    <0.001 |       50 |      9600 |            0.52 |
+|   F7/F8 Muxes            |    <0.001 |       19 |     32600 |            0.06 |
+|   LUT as Distributed RAM |    <0.001 |       24 |      9600 |            0.25 |
+|   Others                 |     0.000 |      152 |       --- |             --- |
+| Signals                  |     0.006 |     6133 |       --- |             --- |
+| Block RAM                |     0.017 |       17 |        50 |           34.00 |
+| MMCM                     |     0.107 |        1 |         5 |           20.00 |
+| I/O                      |     0.021 |       25 |       210 |           11.90 |
+| Static Power             |     0.073 |          |           |                 |
+| Total                    |     0.254 |          |           |                 |
++--------------------------+-----------+----------+-----------+-----------------+
+
+
+1.2 Power Supply Summary
+------------------------
+
++-----------+-------------+-----------+-------------+------------+
+| Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) |
++-----------+-------------+-----------+-------------+------------+
+| Vccint    |       1.000 |     0.063 |       0.053 |      0.010 |
+| Vccaux    |       1.800 |     0.075 |       0.062 |      0.013 |
+| Vcco33    |       3.300 |     0.005 |       0.004 |      0.001 |
+| Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |
+| Vcco18    |       1.800 |     0.000 |       0.000 |      0.000 |
+| Vcco15    |       1.500 |     0.000 |       0.000 |      0.000 |
+| Vcco135   |       1.350 |     0.000 |       0.000 |      0.000 |
+| Vcco12    |       1.200 |     0.000 |       0.000 |      0.000 |
+| Vccaux_io |       1.800 |     0.000 |       0.000 |      0.000 |
+| Vccbram   |       1.000 |     0.002 |       0.001 |      0.001 |
+| MGTAVcc   |       1.000 |     0.000 |       0.000 |      0.000 |
+| MGTAVtt   |       1.200 |     0.000 |       0.000 |      0.000 |
+| Vccadc    |       1.800 |     0.020 |       0.000 |      0.020 |
++-----------+-------------+-----------+-------------+------------+
+
+
+1.3 Confidence Level
+--------------------
+
++-----------------------------+------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
+| User Input Data             | Confidence | Details                                                | Action                                                                                                     |
++-----------------------------+------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
+| Design implementation state | High       | Design is routed                                       |                                                                                                            |
+| Clock nodes activity        | High       | User specified more than 95% of clocks                 |                                                                                                            |
+| I/O nodes activity          | Low        | More than 75% of inputs are missing user specification | Provide missing input activity with simulation results or by editing the "By Resource Type -> I/Os" view   |
+| Internal nodes activity     | Medium     | User specified less than 25% of internal nodes         | Provide missing internal nodes activity with simulation results or by editing the "By Resource Type" views |
+| Device models               | High       | Device models are Production                           |                                                                                                            |
+|                             |            |                                                        |                                                                                                            |
+| Overall confidence level    | Low        |                                                        |                                                                                                            |
++-----------------------------+------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
+
+
+2. Settings
+-----------
+
+2.1 Environment
+---------------
+
++-----------------------+--------------------------+
+| Ambient Temp (C)      | 25.0                     |
+| ThetaJA (C/W)         | 4.8                      |
+| Airflow (LFM)         | 250                      |
+| Heat Sink             | medium (Medium Profile)  |
+| ThetaSA (C/W)         | 4.6                      |
+| Board Selection       | medium (10"x10")         |
+| # of Board Layers     | 12to15 (12 to 15 Layers) |
+| Board Temperature (C) | 25.0                     |
++-----------------------+--------------------------+
+
+
+2.2 Clock Constraints
+---------------------
+
++--------------+---------------------------+-----------------+
+| Clock        | Domain                    | Constraint (ns) |
++--------------+---------------------------+-----------------+
+| CLKFBIN      | infra/clocks/CLKFBIN      |            20.0 |
+| clk_125_90_i | infra/clocks/clk_125_90_i |             8.0 |
+| clk_125_i    | infra/clocks/clk_125_i    |             8.0 |
+| clk_200_i    | infra/clocks/clk_200_i    |             5.0 |
+| clk_ipb_i    | infra/clocks/clk_ipb_i    |            32.0 |
+| rgmii_rxc    | rgmii_rxc                 |             8.0 |
+| sysclk       | sysclk                    |            20.0 |
++--------------+---------------------------+-----------------+
+
+
+3. Detailed Reports
+-------------------
+
+3.1 By Hierarchy
+----------------
+
++------------------------------------------------------------------------------------------+-----------+
+| Name                                                                                     | Power (W) |
++------------------------------------------------------------------------------------------+-----------+
+| top                                                                                      |     0.181 |
+|   infra                                                                                  |     0.180 |
+|     clocks                                                                               |     0.107 |
+|       clkdiv                                                                             |    <0.001 |
+|     eth                                                                                  |     0.029 |
+|       emac0                                                                              |     0.027 |
+|         inst                                                                             |     0.027 |
+|           rgmii_interface                                                                |     0.021 |
+|           temac_gbe_v9_0_rgmii_core                                                      |     0.005 |
+|             addr_filter_top                                                              |    <0.001 |
+|               address_filter_inst                                                        |    <0.001 |
+|                 byte_wide_ram[0].header_field_dist_ram                                   |    <0.001 |
+|                 byte_wide_ram[1].header_field_dist_ram                                   |    <0.001 |
+|                 byte_wide_ram[2].header_field_dist_ram                                   |    <0.001 |
+|                 byte_wide_ram[3].header_field_dist_ram                                   |    <0.001 |
+|                 byte_wide_ram[4].header_field_dist_ram                                   |    <0.001 |
+|                 byte_wide_ram[5].header_field_dist_ram                                   |    <0.001 |
+|                 byte_wide_ram[6].header_field_dist_ram                                   |    <0.001 |
+|                 byte_wide_ram[7].header_field_dist_ram                                   |    <0.001 |
+|                 resync_promiscuous_mode                                                  |    <0.001 |
+|             flow                                                                         |     0.001 |
+|               pfc_tx                                                                     |    <0.001 |
+|               rx                                                                         |    <0.001 |
+|               rx_pause                                                                   |    <0.001 |
+|               sync_rx_enable                                                             |    <0.001 |
+|               sync_tx_enable                                                             |    <0.001 |
+|               tx                                                                         |    <0.001 |
+|               tx_pause                                                                   |    <0.001 |
+|                 sync_good_rx                                                             |    <0.001 |
+|             gmii_mii_rx_gen                                                              |    <0.001 |
+|             gmii_mii_tx_gen                                                              |    <0.001 |
+|             no_avb_tx_axi_intf.tx_axi_shim                                               |    <0.001 |
+|             rx_axi_shim                                                                  |    <0.001 |
+|             rxgen                                                                        |     0.001 |
+|               FCS_CHECK                                                                  |    <0.001 |
+|               FRAME_CHECKER                                                              |    <0.001 |
+|               FRAME_DECODER                                                              |    <0.001 |
+|               RX_SM                                                                      |    <0.001 |
+|             sync_axi_rx_rstn_rx_clk                                                      |    <0.001 |
+|             sync_glbl_rstn_rx_clk                                                        |    <0.001 |
+|             sync_glbl_rstn_tx_clk                                                        |    <0.001 |
+|             sync_int_rx_rst_mgmt_rx_clk                                                  |    <0.001 |
+|             sync_int_tx_rst_mgmt_tx_clk                                                  |    <0.001 |
+|             sync_tx_axi_rstn_tx_clk                                                      |    <0.001 |
+|             txgen                                                                        |     0.001 |
+|               TX_SM1                                                                     |     0.001 |
+|                 CRCGEN                                                                   |    <0.001 |
+|           tx_reset90_sync                                                                |    <0.001 |
+|       fifo                                                                               |     0.001 |
+|         U0                                                                               |     0.001 |
+|           inst_fifo_gen                                                                  |     0.001 |
+|             gaxis_fifo.gaxisf.axisf                                                      |     0.001 |
+|               grf.rf                                                                     |     0.001 |
+|                 gntv_or_sync_fifo.gcx.clkx                                               |    <0.001 |
+|                   rd_pntr_cdc_inst                                                       |    <0.001 |
+|                   wr_pntr_cdc_inst                                                       |    <0.001 |
+|                 gntv_or_sync_fifo.gl0.rd                                                 |    <0.001 |
+|                   gr1.gr1_int.rfwft                                                      |    <0.001 |
+|                   gras.rsts                                                              |    <0.001 |
+|                   rpntr                                                                  |    <0.001 |
+|                 gntv_or_sync_fifo.gl0.wr                                                 |    <0.001 |
+|                   gwas.wsts                                                              |    <0.001 |
+|                   wpntr                                                                  |    <0.001 |
+|                 gntv_or_sync_fifo.mem                                                    |    <0.001 |
+|                   gdm.dm_gen.dm                                                          |    <0.001 |
+|                     RAM_reg_0_15_0_5                                                     |    <0.001 |
+|                     RAM_reg_0_15_6_9                                                     |    <0.001 |
+|                 rstblk                                                                   |    <0.001 |
+|                   ngwrdrst.grst.g7serrst.gnsckt_wrst.gic_rst.rst_rd_reg2_inst            |    <0.001 |
+|                   ngwrdrst.grst.g7serrst.gnsckt_wrst.gic_rst.xpm_cdc_single_inst_rrst_wr |    <0.001 |
+|                   ngwrdrst.grst.g7serrst.gnsckt_wrst.gic_rst.xpm_cdc_single_inst_wrst_rd |    <0.001 |
+|                   ngwrdrst.grst.g7serrst.gnsckt_wrst.rst_wr_reg2_inst                    |    <0.001 |
+|     ipbus                                                                                |     0.043 |
+|       trans                                                                              |     0.002 |
+|         cfg                                                                              |    <0.001 |
+|         iface                                                                            |     0.001 |
+|         sm                                                                               |     0.001 |
+|       udp_if                                                                             |     0.041 |
+|         ARP                                                                              |     0.001 |
+|         IPADDR                                                                           |    <0.001 |
+|         RARP_block                                                                       |     0.002 |
+|         clock_crossing_if                                                                |    <0.001 |
+|         internal_ram                                                                     |     0.003 |
+|         internal_ram_selector                                                            |    <0.001 |
+|         internal_ram_shim                                                                |    <0.001 |
+|         ipbus_rx_ram                                                                     |     0.008 |
+|         ipbus_tx_ram                                                                     |     0.006 |
+|         payload                                                                          |     0.002 |
+|         ping                                                                             |    <0.001 |
+|         resend                                                                           |    <0.001 |
+|         rx_byte_sum                                                                      |    <0.001 |
+|         rx_packet_parser                                                                 |     0.003 |
+|         rx_ram_mux                                                                       |    <0.001 |
+|         rx_ram_selector                                                                  |    <0.001 |
+|         rx_reset_block                                                                   |    <0.001 |
+|         rx_transactor                                                                    |    <0.001 |
+|         status                                                                           |     0.001 |
+|         status_buffer                                                                    |     0.003 |
+|         tx_byte_sum                                                                      |    <0.001 |
+|         tx_main                                                                          |     0.002 |
+|         tx_ram_selector                                                                  |    <0.001 |
+|         tx_transactor                                                                    |     0.002 |
+|     stretch                                                                              |    <0.001 |
+|       clkdiv                                                                             |    <0.001 |
+|   slaves                                                                                 |    <0.001 |
+|     I3                                                                                   |    <0.001 |
+|       i2c_interface                                                                      |    <0.001 |
+|         bit_controller                                                                   |    <0.001 |
+|         byte_controller                                                                  |    <0.001 |
+|         registers                                                                        |    <0.001 |
+|     fabric                                                                               |    <0.001 |
+|     i2c_scl_b_IOBUF_inst                                                                 |     0.000 |
+|     i2c_sda_b_IOBUF_inst                                                                 |    <0.001 |
+|     slave0                                                                               |    <0.001 |
+|     slave1                                                                               |    <0.001 |
++------------------------------------------------------------------------------------------+-----------+
+
+

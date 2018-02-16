@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Vivado v2017.4 (64-bit)
+# SW Build 2086221 on Fri Dec 15 20:54:30 MST 2017
+# IP Build 2085800 on Fri Dec 15 22:25:07 MST 2017
+# Start of session at: Fri Feb 16 18:09:13 2018
+# Process ID: 10116
+# Current directory: /users/phpgb/workspace/myFirmware/DUNE/SFP_Fanout_pc059/work/SFPFanout.runs/synth_1
+# Command line: vivado -log top.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source top.tcl
+# Log file: /users/phpgb/workspace/myFirmware/DUNE/SFP_Fanout_pc059/work/SFPFanout.runs/synth_1/top.vds
+# Journal file: /users/phpgb/workspace/myFirmware/DUNE/SFP_Fanout_pc059/work/SFPFanout.runs/synth_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace

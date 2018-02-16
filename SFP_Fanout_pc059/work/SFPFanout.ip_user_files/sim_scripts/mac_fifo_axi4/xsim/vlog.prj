@@ -1,0 +1,6 @@
+verilog xil_defaultlib  \
+"../../../ip/mac_fifo_axi4/sim/mac_fifo_axi4.v" \
+
+verilog xil_defaultlib "glbl.v"
+
+nosort

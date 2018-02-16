@@ -1,0 +1,5 @@
+temac_gbe_v9_0_rgmii_block_sync_block.v,verilog,xil_defaultlib,../../../ip/temac_gbe_v9_0_rgmii/synth/common/temac_gbe_v9_0_rgmii_block_sync_block.v,
+temac_gbe_v9_0_rgmii_rgmii_v2_0_if.v,verilog,xil_defaultlib,../../../ip/temac_gbe_v9_0_rgmii/synth/physical/temac_gbe_v9_0_rgmii_rgmii_v2_0_if.v,
+temac_gbe_v9_0_rgmii_block.v,verilog,xil_defaultlib,../../../ip/temac_gbe_v9_0_rgmii/synth/temac_gbe_v9_0_rgmii_block.v,
+temac_gbe_v9_0_rgmii.v,verilog,xil_defaultlib,../../../ip/temac_gbe_v9_0_rgmii/synth/temac_gbe_v9_0_rgmii.v,
+glbl.v,Verilog,xil_defaultlib,glbl.v

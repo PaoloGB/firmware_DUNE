@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<connections>
+  <connection id="sfpfanout" uri="ipbusudp-2.0://192.168.200.29:50001"
+   address_table="file://./pc059_addrmap.xml" />
+</connections>
