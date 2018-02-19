@@ -100,7 +100,8 @@ begin
 	phy_rstn <= not phy_rst_e;
 		
 	mac_addr <= X"020ddba1151" & not cfg; -- Careful here, arbitrary addresses do not always work
-	ip_addr <= X"c0a8c81" & not cfg; -- 192.168.200.16+n
+	--ip_addr <= X"c0a8c81" & not cfg; -- 192.168.200.16+n
+	ip_addr <= X"c0a8c81C"; -- 192.168.200.28 (hardwired for now)
 
 -- ipbus slaves live in the entity below, and can expose top-level ports
 -- The ipbus fabric is instantiated within.
