@@ -83,3 +83,14 @@ set_property PACKAGE_PIN K1 [get_ports {cfg[1]}]
 set_property PACKAGE_PIN J4 [get_ports {cfg[2]}]
 set_property PACKAGE_PIN H4 [get_ports {cfg[3]}]
 
+## Reset signal for the Si5345 clock generator
+set_property IOSTANDARD LVCMOS33 [get_ports rst_clk_cvcc]
+set_property PACKAGE_PIN T6 [get_ports rst_clk_cvcc]
+
+## Reset signal for the 1:8 I2C multiplexer
+set_property IOSTANDARD LVCMOS33 [get_ports rst_i2cmux_cvcc]
+set_property PACKAGE_PIN T1 [get_ports rst_i2cmux_cvcc]
+
+## Reset signal sent to 0.1" header for external I2C
+set_property IOSTANDARD LVCMOS33 [get_ports ext_rst]
+set_property PACKAGE_PIN C7 [get_ports ext_rst]

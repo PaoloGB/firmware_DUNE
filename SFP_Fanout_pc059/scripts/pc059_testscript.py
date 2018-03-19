@@ -84,7 +84,7 @@ res= zeClock.getDeviceVersion()
 zeClock.checkDesignID()
 #zeClock.setPage(0, True)
 #zeClock.getPage(True)
-clkRegList= zeClock.parse_clk("./../../bitFiles/TLU_CLK_Config.txt")
+clkRegList= zeClock.parse_clk("./../../bitFiles/pc059_Si5345.txt")
 zeClock.writeConfiguration(clkRegList)######
 zeClock.writeRegister(0x0536, [0x0B]) #Configures manual switch of inputs
 zeClock.writeRegister(0x0949, [0x0F]) #Enable all inputs
@@ -100,17 +100,16 @@ print "  Clock LOS (REG 0x000D): 0x%X" % los[0]
 #######################################################
 # #I2C EXPANDER CONFIGURATION BEGIN
 # IC28 EQUALIZER EXPANDER
-#IC28=PCA9539PW(master_I2C, 0x74)
+IC28=PCA9539PW(master_I2C, 0x74)
 #BANK 0
-#IC28.setInvertReg(0, 0x00)# 0= normal
-#IC28.setIOReg(0, 0x00)# 0= output <<<<<<<<<<<<<<<<<<<
-#IC28.setOutputs(0, 0xFF)
-#res= IC28.getInputs(0)
-#print "IC28 read back bank 0: 0x%X" % res[0]
+IC28.setInvertReg(0, 0x00)# 0= normal
+IC28.setIOReg(0, 0x00)# 0= output <<<<<<<<<<<<<<<<<<<
+IC28.setOutputs(0, 0xFF)
+res= IC28.getInputs(0)
+print "IC28 read back bank 0: 0x%X" % res[0]
 #BANK 1
-#IC28.setInvertReg(1, 0x00)# 0= normal
-#IC28.setIOReg(1, 0x00)# 0= output <<<<<<<<<<<<<<<<<<<
-#IC28.setOutputs(1, 0xFF)
-#res= IC28.getInputs(1)
-#print "IC28 read back bank 1: 0x%X" % res[0]
-
+IC28.setInvertReg(1, 0x00)# 0= normal
+IC28.setIOReg(1, 0x00)# 0= output <<<<<<<<<<<<<<<<<<<
+IC28.setOutputs(1, 0xFF)
+res= IC28.getInputs(1)
+print "IC28 read back bank 1: 0x%X" % res[0]

@@ -50,7 +50,10 @@ entity top is port(
 		phy_rstn: out std_logic;
         i2c_scl: inout std_logic; -- I2C clock line
         i2c_sda: inout std_logic; -- I2C data line
-        i2c_reset: out std_logic --Reset line for the expander serial lines
+        i2c_reset: out std_logic; --Reset line for the expander serial lines
+        rst_clk_cvcc: out std_logic; --Reset the Si5345 chip. Active low.
+        rst_i2cmux_cvcc: out std_logic; --Reset signal for the 1:8 I2C multiplexer. Active low.
+        ext_rst:out std_logic --Reset signal sent to 0.1" header for external I2C. Active low.
 	);
 
 end top;
@@ -70,6 +73,9 @@ architecture rtl of top is
 	
 begin
 
+    rst_clk_cvcc <= '1';
+    rst_i2cmux_cvcc <= '1';
+    ext_rst <= '1';
 --    i2c_scl_b <= '0' when (s_i2c_scl_enb = '0') else 'Z';
 --    i2c_sda_b <= '0' when (s_i2c_sda_enb = '0') else 'Z';
 --    i2c_reset <= '1';
