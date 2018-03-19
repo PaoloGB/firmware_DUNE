@@ -1,1 +1,9 @@
+
+## Backup files
+*.py~
+*.md~
+*.sh~
+*.*~
+
+
 work/

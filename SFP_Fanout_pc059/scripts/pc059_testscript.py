@@ -26,7 +26,7 @@ print "CHECK REG= ", hex(reg)
 
 # #First I2C core
 print ("Instantiating master I2C core:")
-master_I2C= I2CCore(hw, 10, 5, "i2c_master", None)
+master_I2C= I2CCore(hw, 12800, 10, "i2c_master", None)
 master_I2C.state()
 
 
@@ -50,7 +50,32 @@ if (enableCore):
    res= master_I2C.read( myslave, nwords)
    print "\tPost RegDir: ", res
 
+#######################################################
+#EEPROM BEGIN
+zeEEPROM= E24AA025E48T(master_I2C, 0x57)
+res=zeEEPROM.readEEPROM(0xfa, 6)
+result="  EEPROM ID:\n\t"
+for iaddr in res:
+    result+="%02x "%(iaddr)
+print result
+#EEPROM END
 
+#######################################################
+# #I2C EXPANDER CONFIGURATION BEGIN
+# IC28 EQUALIZER EXPANDER
+#IC28=PCA9539PW(master_I2C, 0x74)
+#BANK 0
+#IC28.setInvertReg(0, 0x00)# 0= normal
+#IC28.setIOReg(0, 0x00)# 0= output <<<<<<<<<<<<<<<<<<<
+#IC28.setOutputs(0, 0xFF)
+#res= IC28.getInputs(0)
+#print "IC28 read back bank 0: 0x%X" % res[0]
+#BANK 1
+#IC28.setInvertReg(1, 0x00)# 0= normal
+#IC28.setIOReg(1, 0x00)# 0= output <<<<<<<<<<<<<<<<<<<
+#IC28.setOutputs(1, 0xFF)
+#res= IC28.getInputs(1)
+#print "IC28 read back bank 1: 0x%X" % res[0]
 
 #######################################################
 #CLOCK CONFIGURATION BEGIN
@@ -71,16 +96,6 @@ print "  Clock LOL (REG 0x000E): 0x%X" % lol[0]
 los= zeClock.readRegister(0x000D, 1)
 print "  Clock LOS (REG 0x000D): 0x%X" % los[0]
 #CLOCK CONFIGURATION END
-
-#######################################################
-#EEPROM BEGIN
-zeEEPROM= E24AA025E48T(master_I2C, 0x57)
-res=zeEEPROM.readEEPROM(0xfa, 6)
-result="  EEPROM ID:\n\t"
-for iaddr in res:
-    result+="%02x "%(iaddr)
-print result
-#EEPROM END
 
 #######################################################
 # #I2C EXPANDER CONFIGURATION BEGIN

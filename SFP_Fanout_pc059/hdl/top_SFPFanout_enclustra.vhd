@@ -63,8 +63,8 @@ architecture rtl of top is
 	signal ipb_out: ipb_wbus;
 	signal ipb_in: ipb_rbus;
 	signal inf_leds: std_logic_vector(1 downto 0);
-	--signal s_i2c_scl_enb         : std_logic;
-    --signal s_i2c_sda_enb         : std_logic;
+	signal s_i2c_scl_enb         : std_logic;
+    signal s_i2c_sda_enb         : std_logic;
 	
     
 	
@@ -106,6 +106,10 @@ begin
 -- ipbus slaves live in the entity below, and can expose top-level ports
 -- The ipbus fabric is instantiated within.
 
+    i2c_scl <= '0' when (s_i2c_scl_enb = '0') else 'Z';
+    i2c_sda <= '0' when (s_i2c_sda_enb = '0') else 'Z';
+    
+
 	slaves: entity work.ipbus_fanout_slaves
 		port map(
 			ipb_clk => clk_ipb,
@@ -117,7 +121,9 @@ begin
 			userled => userled,
 			i2c_scl_b => i2c_scl,
             i2c_sda_b => i2c_sda,
-            i2c_rst_b => i2c_reset
+            i2c_rst_b => i2c_reset,
+            i2c_scl_enb_o => s_i2c_scl_enb,
+            i2c_sda_enb_o => s_i2c_sda_enb
 		);
 
 

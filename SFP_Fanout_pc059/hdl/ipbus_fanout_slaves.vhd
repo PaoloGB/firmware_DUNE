@@ -42,7 +42,7 @@ use work.ipbus_decode_fanout.all;
 
 entity ipbus_fanout_slaves is
     generic(
-        constant FW_VERSION : unsigned(31 downto 0):= X"059a0001" -- Firmware revision. Remember to change this as needed.
+        constant FW_VERSION : unsigned(31 downto 0):= X"059a0003" -- Firmware revision. Remember to change this as needed.
     );
 	port(
 		ipb_clk: in std_logic;
@@ -52,9 +52,11 @@ entity ipbus_fanout_slaves is
 		nuke: out std_logic;
 		soft_rst: out std_logic;
 		userled: out std_logic;
-		i2c_scl_b: inout std_logic; -- I2C clock line
-        i2c_sda_b: inout std_logic; -- I2C data line
-        i2c_rst_b: out std_logic --Reset line for the expander serial lines
+		i2c_scl_b: in std_logic; -- I2C clock line
+        i2c_sda_b: in std_logic; -- I2C data line
+        i2c_rst_b: out std_logic; --Reset line for the expander serial lines
+        i2c_scl_enb_o : OUT    std_logic;
+        i2c_sda_enb_o : OUT    std_logic
 	);
 
 end ipbus_fanout_slaves;
@@ -149,8 +151,8 @@ begin
 
     -- I2C master to control lines to slaves on board
 
-    i2c_scl_b <= '0' when (s_i2c_scl_enb = '0') else 'Z';
-    i2c_sda_b <= '0' when (s_i2c_sda_enb = '0') else 'Z';
+    --i2c_scl_b <= '0' when (s_i2c_scl_enb = '0') else 'Z';
+    --i2c_sda_b <= '0' when (s_i2c_sda_enb = '0') else 'Z';
     i2c_rst_b <= '1';
 		
     I3 : i2c_master
@@ -164,5 +166,7 @@ begin
         i2c_sda_enb_o => s_i2c_sda_enb,
         ipbus_o       => ipbr(N_SLV_I2C_0)
     );
+    i2c_scl_enb_o <= s_i2c_scl_enb;
+    i2c_sda_enb_o <= s_i2c_sda_enb;
 
 end rtl;
