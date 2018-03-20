@@ -9,5 +9,8 @@ Scripts
 *.sh~
 *.*~
 
+## Vivado auxiliary files
+vivado.jou
+vivado.log
 
 work/
