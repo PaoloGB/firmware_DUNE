@@ -14,6 +14,8 @@ from si5345 import si5345
 from AD5665R import AD5665R
 from PCA9539PW import PCA9539PW
 from E24AA025E48T import E24AA025E48T
+from PCA9548ADW import PCA9548ADW
+from ADN2814ACPZ import ADN2814ACPZ
 
 manager = uhal.ConnectionManager("file://./pc059_connection.xml")
 hw = manager.getDevice("sfpfanout")
@@ -142,3 +144,29 @@ if doIC27:
   res= IC27.getInputs(1)
   print "IC27 read back bank 1: 0x%X" % res[0]
 # #I2C EXPANDER CONFIGURATION END
+
+#######################################################
+# #I2C MULTIPLEXER BEGIN
+# IC7 I2C MULTIPLEXER FOR SFPs
+doIC7= True
+if doIC7:
+  IC7=PCA9548ADW(master_I2C, 0x73)
+  IC7.disableAllChannels(True)
+  print "  I2C MUX (should be 0)", IC7.getChannelStatus(True)
+# #I2C MULTIPLEXER END
+
+#######################################################
+# #CDR UPSTREAM BEGIN
+# IC26 CLOCK AND DATA RECOVERY CHIP
+doIC26= True
+if doIC26:
+  IC26=ADN2814ACPZ(master_I2C, 0x40)
+# #CDR UPSTREAM END
+
+#######################################################
+# #CDR MULTIPLEXER BEGIN
+# IC26 CLOCK AND DATA RECOVERY CHIP
+doIC6= True
+if doIC6:
+  IC6=ADN2814ACPZ(master_I2C, 0x60)
+# #CDR MULTIPLEXER END
