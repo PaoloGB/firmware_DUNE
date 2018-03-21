@@ -94,3 +94,68 @@ set_property PACKAGE_PIN T1 [get_ports rst_i2cmux_cvcc]
 ## Reset signal sent to 0.1" header for external I2C
 set_property IOSTANDARD LVCMOS33 [get_ports ext_rst]
 set_property PACKAGE_PIN C7 [get_ports ext_rst]
+
+## Spare LED controls
+set_property IOSTANDARD LVCMOS33 [get_ports {led_fmc_disable[*]}]
+set_property PACKAGE_PIN E7 [get_ports {led_fmc_disable[0]}]
+set_property PACKAGE_PIN H6 [get_ports {led_fmc_disable[1]}]
+set_property PACKAGE_PIN H1 [get_ports {led_fmc_disable[2]}]
+
+## Spare LED controls
+set_property IOSTANDARD LVCMOS33 [get_ports {gpio_pins[*]}]
+set_property PACKAGE_PIN P4 [get_ports {gpio_pins[0]}]
+set_property PACKAGE_PIN P3 [get_ports {gpio_pins[1]}]
+set_property PACKAGE_PIN P2 [get_ports {gpio_pins[2]}]
+set_property PACKAGE_PIN R2 [get_ports {gpio_pins[3]}]
+set_property PACKAGE_PIN U4 [get_ports {gpio_pins[4]}]
+set_property PACKAGE_PIN U3 [get_ports {gpio_pins[5]}]
+
+## LOS signals from SFP cages (downstream)
+set_property IOSTANDARD LVCMOS33 [get_ports {sfp_los[*]}]
+set_property PACKAGE_PIN R8 [get_ports {sfp_los[0]}]
+set_property PACKAGE_PIN T8 [get_ports {sfp_los[1]}]
+set_property PACKAGE_PIN E2 [get_ports {sfp_los[2]}]
+set_property PACKAGE_PIN D2 [get_ports {sfp_los[3]}]
+set_property PACKAGE_PIN J3 [get_ports {sfp_los[4]}]
+set_property PACKAGE_PIN J2 [get_ports {sfp_los[5]}]
+set_property PACKAGE_PIN M4 [get_ports {sfp_los[6]}]
+set_property PACKAGE_PIN N4 [get_ports {sfp_los[7]}]
+
+## Signals from/to upstream SFP cage
+set_property IOSTANDARD LVCMOS33 [get_ports {sfp_ups_los}]
+set_property PACKAGE_PIN F1 [get_ports {sfp_ups_los}]
+
+set_property IOSTANDARD LVCMOS33 [get_ports {sfp_ups_fault_cvcc}]
+set_property PACKAGE_PIN L3 [get_ports {sfp_ups_fault_cvcc}]
+
+set_property IOSTANDARD LVCMOS33 [get_ports {sfp_ups_tx_disable_cvcc}]
+set_property PACKAGE_PIN E1 [get_ports {sfp_ups_tx_disable_cvcc}]
+
+## Control signals for the INPUT multiplexer 8:1
+set_property IOSTANDARD LVCMOS33 [get_ports {inmux_cvcc[*]}]
+set_property PACKAGE_PIN N2 [get_ports {inmux_cvcc[0]}]
+set_property PACKAGE_PIN N1 [get_ports {inmux_cvcc[1]}]
+set_property PACKAGE_PIN R1 [get_ports {inmux_cvcc[2]}]
+
+## Control signals from Si5345
+set_property IOSTANDARD LVCMOS33 [get_ports {clk_lol_cvcc}]
+set_property PACKAGE_PIN K3 [get_ports {clk_lol_cvcc}]
+
+set_property IOSTANDARD LVCMOS33 [get_ports {clk_intr_cvcc}]
+set_property PACKAGE_PIN D8 [get_ports {clk_intr_cvcc}]
+
+## Signals from the upstream CDR
+set_property IOSTANDARD LVCMOS33 [get_ports {ups_cdr_los_cvcc}]
+set_property PACKAGE_PIN F4 [get_ports {ups_cdr_los_cvcc}]
+
+set_property IOSTANDARD LVCMOS33 [get_ports {ups_cdr_lol_cvcc}]
+set_property PACKAGE_PIN F3 [get_ports {ups_cdr_lol_cvcc}]
+
+
+## Signal from the multiplexer CDR
+set_property IOSTANDARD LVCMOS33 [get_ports {mux_cdr_los_cvcc}]
+set_property PACKAGE_PIN C6 [get_ports {mux_cdr_los_cvcc}]
+
+set_property IOSTANDARD LVCMOS33 [get_ports {mux_cdr_lol_cvcc}]
+set_property PACKAGE_PIN C5 [get_ports {mux_cdr_lol_cvcc}]
+

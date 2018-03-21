@@ -39,7 +39,7 @@ use work.ipbus.ALL;
 
 entity top is port(
 		sysclk: in std_logic;
-		leds: out std_logic_vector(3 downto 0); -- status LEDs
+		leds: out std_logic_vector(3 downto 0); -- status LEDs on FPGA
 		cfg: in std_logic_vector(3 downto 0); -- switches
 		rgmii_txd: out std_logic_vector(3 downto 0);
 		rgmii_tx_ctl: out std_logic;
@@ -51,9 +51,22 @@ entity top is port(
         i2c_scl: inout std_logic; -- I2C clock line
         i2c_sda: inout std_logic; -- I2C data line
         i2c_reset: out std_logic; --Reset line for the expander serial lines
-        rst_clk_cvcc: out std_logic; --Reset the Si5345 chip. Active low.
-        rst_i2cmux_cvcc: out std_logic; --Reset signal for the 1:8 I2C multiplexer. Active low.
-        ext_rst:out std_logic --Reset signal sent to 0.1" header for external I2C. Active low.
+        rst_clk_cvcc: out std_logic; --Reset the Si5345 chip. Active low
+        rst_i2cmux_cvcc: out std_logic; --Reset signal for the 1:8 I2C multiplexer. Active low
+        ext_rst:out std_logic; --Reset signal sent to 0.1" header for external I2C. Active low
+        led_fmc_disable: out std_logic_vector(2 downto 0); -- status LEDs on the SFP board
+        sfp_los: in std_logic_vector(7 downto 0); -- "Loss of signal" from SFP cages (downstream)
+        inmux_cvcc: out std_logic_vector(2 downto 0); -- Control pins to select the line connected to the input multiplexer
+        clk_lol_cvcc: in std_logic; -- LOL sisgnal from the Si5345. Active LOW
+        clk_intr_cvcc: in std_logic; -- Interrupt signal from the Si5345. Active LOW
+        sfp_ups_los:in std_logic; -- LOS signal from the upstream SFP cage
+        ups_cdr_los_cvcc: in std_logic; -- LOS signal from the upstream CDR
+        mux_cdr_los_cvcc: in std_logic; -- LOS signal from the multiplexer CDR
+        mux_cdr_lol_cvcc: in std_logic; -- LOL signal from the multiplexer CDR
+        sfp_ups_fault_cvcc: in std_logic; -- FAULT signal from the upstream SFP
+        sfp_ups_tx_disable_cvcc: out std_logic; -- TX disable signal for the upstream SFP
+        ups_cdr_lol_cvcc: in  std_logic; -- LOL signal from the upstream CDR
+        gpio_pins: out std_logic_vector(5 downto 0) -- general purpose pins. For now set as outputs for testing
 	);
 
 end top;
@@ -73,12 +86,18 @@ architecture rtl of top is
 	
 begin
 
+-- Assign values to constant signals here (even if just temporary)
     rst_clk_cvcc <= '1';
     rst_i2cmux_cvcc <= '1';
     ext_rst <= '1';
+    led_fmc_disable <= not ('0' & '1' & '0');
+    gpio_pins <= ('0' & '1' & '0' & '1' & '0' & '1');
+    inmux_cvcc <= ('0' & '0' & '0');
+    sfp_ups_tx_disable_cvcc <= '0';
 --    i2c_scl_b <= '0' when (s_i2c_scl_enb = '0') else 'Z';
 --    i2c_sda_b <= '0' when (s_i2c_sda_enb = '0') else 'Z';
 --    i2c_reset <= '1';
+
 -- Infrastructure
 
 	infra: entity work.enclustra_ax3_pm3_infra

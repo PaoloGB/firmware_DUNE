@@ -42,7 +42,7 @@ use work.ipbus_decode_fanout.all;
 
 entity ipbus_fanout_slaves is
     generic(
-        constant FW_VERSION : unsigned(31 downto 0):= X"059a0006" -- Firmware revision. Remember to change this as needed.
+        constant FW_VERSION : unsigned(31 downto 0):= X"059a0008" -- Firmware revision. Remember to change this as needed.
     );
 	port(
 		ipb_clk: in std_logic;
