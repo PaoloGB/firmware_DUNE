@@ -34,13 +34,15 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+library UNISIM;
+use UNISIM.vcomponents.all;
 
 use work.ipbus.ALL;
 
 entity top is port(
 		sysclk: in std_logic;
 		leds: out std_logic_vector(3 downto 0); -- status LEDs on FPGA
-		cfg: in std_logic_vector(3 downto 0); -- switches
+		--cfg: in std_logic_vector(3 downto 0); -- switches
 		rgmii_txd: out std_logic_vector(3 downto 0);
 		rgmii_tx_ctl: out std_logic;
 		rgmii_txc: out std_logic;
@@ -66,6 +68,20 @@ entity top is port(
         sfp_ups_fault_cvcc: in std_logic; -- FAULT signal from the upstream SFP
         sfp_ups_tx_disable_cvcc: out std_logic; -- TX disable signal for the upstream SFP
         ups_cdr_lol_cvcc: in  std_logic; -- LOL signal from the upstream CDR
+        data_ffd_p: out std_logic_vector(2 downto 0); -- Differential pairs sending DATA to the flip-flops
+        data_ffd_n: out std_logic_vector(2 downto 0); -- Differential pairs sending DATA to the flip-flops
+        clkdata_fpga_p: in std_logic_vector(7 downto 0); -- Differential stream (CLK+DATA) from SFPs downstream
+        clkdata_fpga_n: in std_logic_vector(7 downto 0); -- Differential stream (CLK+DATA) from SFPs downstream
+        data_from_hdmi_p: in std_logic; -- Differential data from HDMI upstream
+        data_from_hdmi_n: in std_logic; -- Differential data from HDMI upstream
+        data_cdr_ups_p: in std_logic; -- Differential data from CDR upstream
+        data_cdr_ups_n: in std_logic; -- Differential data from CDR upstream
+        data_from_mux_p: in std_logic; -- Differential data from downstream multiplexer (via CDR)
+        data_from_mux_n: in std_logic; -- Differential data from downstream multiplexer (via CDR)
+        clk_gen_p: in  std_logic; -- Clock from Si5345
+        clk_gen_n: in  std_logic; -- Clock from Si5345
+        clk_from_mux_p: in  std_logic; -- Clock from multiplexer CDR
+        clk_from_mux_n: in  std_logic; -- Clock from multiplexer CDR
         gpio_pins: out std_logic_vector(5 downto 0) -- general purpose pins. For now set as outputs for testing
 	);
 
@@ -81,6 +97,7 @@ architecture rtl of top is
 	signal inf_leds: std_logic_vector(1 downto 0);
 	signal s_i2c_scl_enb         : std_logic;
     signal s_i2c_sda_enb         : std_logic;
+    signal clk_gen : std_logic; --signal for the clock from Si5345
 	
     
 	
@@ -91,9 +108,11 @@ begin
     rst_i2cmux_cvcc <= '1';
     ext_rst <= '1';
     led_fmc_disable <= not ('0' & '1' & '0');
-    gpio_pins <= ('0' & '1' & '0' & '1' & '0' & '1');
+    gpio_pins <= ('0' & '1' & '0' & sysclk & '0' & clk_gen);
     inmux_cvcc <= ('0' & '0' & '0');
     sfp_ups_tx_disable_cvcc <= '0';
+    
+
 --    i2c_scl_b <= '0' when (s_i2c_scl_enb = '0') else 'Z';
 --    i2c_sda_b <= '0' when (s_i2c_sda_enb = '0') else 'Z';
 --    i2c_reset <= '1';
@@ -124,7 +143,8 @@ begin
 	leds <= not ('0' & userled & inf_leds);
 	phy_rstn <= not phy_rst_e;
 		
-	mac_addr <= X"020ddba1151" & not cfg; -- Careful here, arbitrary addresses do not always work
+	--mac_addr <= X"020ddba1151" & not cfg; -- Careful here, arbitrary addresses do not always work
+	mac_addr <= X"020ddba11511" ; -- Careful here, arbitrary addresses do not always work
 	--ip_addr <= X"c0a8c81" & not cfg; -- 192.168.200.16+n
 	ip_addr <= X"c0a8c81C"; -- 192.168.200.28 (hardwired for now)
 
@@ -150,7 +170,79 @@ begin
             i2c_scl_enb_o => s_i2c_scl_enb,
             i2c_sda_enb_o => s_i2c_sda_enb
 		);
+	
+	output_buffers_loop: for iBuf in 0 to 2 generate
+        OBUFDS_inst: OBUFDS
+        generic map(
+            IOSTANDARD => "DEFAULT")
+            port map(
+            O =>  data_ffd_p(iBuf),--Diff_poutput(connectdirectlytotop-levelport)
+            OB => data_ffd_n(iBuf),--Diff_noutput(connectdirectlytotop-levelport)
+            I =>  '0' --Bufferinput
+        );
+    end generate output_buffers_loop;
+    
+    input_buffers_loop: for iBuf in 0 to 7 generate
+        IBUFDS_inst: IBUFDS
+        generic map(
+            IOSTANDARD => "DEFAULT",
+            DIFF_TERM => TRUE)        
+        port map(
+            O => open,
+            I => clkdata_fpga_p(iBuf),
+            IB => clkdata_fpga_n(iBuf)   
+        );
+                
+    end generate input_buffers_loop;
+    
+    IBUFDS_hdmi: IBUFDS
+        generic map(
+            IOSTANDARD => "DEFAULT",
+            DIFF_TERM => TRUE)        
+        port map(
+            O => open,
+            I => data_from_hdmi_p,
+            IB => data_from_hdmi_n   
+        );
+        
+    IBUFDS_CDR_UPS: IBUFDS
+        generic map(
+            IOSTANDARD => "DEFAULT",
+            DIFF_TERM => TRUE)        
+        port map(
+            O => open,
+            I => data_cdr_ups_p,
+            IB => data_cdr_ups_n   
+        );    
 
-
+    IBUFDS_MUX: IBUFDS
+        generic map(
+            IOSTANDARD => "DEFAULT",
+            DIFF_TERM => TRUE)        
+        port map(
+            O => open,
+            I => data_from_mux_p,
+            IB => data_from_mux_n   
+        );
+        
+    IBUFDS_CLK_GEN: IBUFGDS
+            generic map(
+                IOSTANDARD => "DEFAULT",
+                DIFF_TERM => TRUE)        
+            port map(
+                O => clk_gen,
+                I => clk_gen_p,
+                IB => clk_gen_n   
+            );   
+                  
+    IBUFDS_CLK_FROM_MUX: IBUFGDS
+            generic map(
+                IOSTANDARD => "DEFAULT",
+                DIFF_TERM => TRUE)        
+            port map(
+                O => open,
+                I => clk_from_mux_p,
+                IB => clk_from_mux_n   
+            );         
 
 end rtl;
