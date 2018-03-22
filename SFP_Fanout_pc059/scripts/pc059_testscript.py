@@ -65,7 +65,7 @@ if doEeprom:
 
 #######################################################
 #CLOCK CONFIGURATION BEGIN
-doClock = False
+doClock = True
 if doClock:
   zeClock=si5345(master_I2C, 0x68)
   res= zeClock.getDeviceVersion()
