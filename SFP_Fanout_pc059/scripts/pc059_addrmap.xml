@@ -23,8 +23,18 @@
   <node id="PulseT0"  address="0x1" permission="w" description=""/>
 </node>
 -->
-<!-- I2C registers. Tested ok.-->
-<node id="i2c_master"      address="0x3000" description="I2C Master interface">
+
+<!-- I2C registers for secondary bus (SFP upstream).-->
+<node id="i2c_sfp"      address="0x2000" description="Secondary I2C Master interface">
+  <node id="i2c_pre_lo"    address="0x0" mask="0x000000ff" permission="rw" description="" />
+  <node id="i2c_pre_hi"    address="0x1" mask="0x000000ff" permission="rw" description="" />
+  <node id="i2c_ctrl"      address="0x2" mask="0x000000ff" permission="rw" description="" />
+  <node id="i2c_rxtx"      address="0x3" mask="0x000000ff" permission="rw" description="" />
+  <node id="i2c_cmdstatus" address="0x4" mask="0x000000ff" permission="rw" description="" />
+</node>
+
+<!-- I2C registers for main bus.-->
+<node id="i2c_master"      address="0x3000" description="Main I2C Master interface">
   <node id="i2c_pre_lo"    address="0x0" mask="0x000000ff" permission="rw" description="" />
   <node id="i2c_pre_hi"    address="0x1" mask="0x000000ff" permission="rw" description="" />
   <node id="i2c_ctrl"      address="0x2" mask="0x000000ff" permission="rw" description="" />

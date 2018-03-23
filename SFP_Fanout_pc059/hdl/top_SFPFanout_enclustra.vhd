@@ -50,8 +50,8 @@ entity top is port(
 		rgmii_rx_ctl: in std_logic;
 		rgmii_rxc: in std_logic;
 		phy_rstn: out std_logic;
-        i2c_scl: inout std_logic; -- I2C clock line
-        i2c_sda: inout std_logic; -- I2C data line
+        i2c_scl: inout std_logic; -- Main I2C clock line
+        i2c_sda: inout std_logic; -- Main I2C data line
         i2c_reset: out std_logic; --Reset line for the expander serial lines
         rst_clk_cvcc: out std_logic; --Reset the Si5345 chip. Active low
         rst_i2cmux_cvcc: out std_logic; --Reset signal for the 1:8 I2C multiplexer. Active low
@@ -82,6 +82,8 @@ entity top is port(
         clk_gen_n: in  std_logic; -- Clock from Si5345
         clk_from_mux_p: in  std_logic; -- Clock from multiplexer CDR
         clk_from_mux_n: in  std_logic; -- Clock from multiplexer CDR
+        i2c_scl_sfp: inout std_logic; -- Secondary I2C clock line for SFP upstream
+        i2c_sda_sfp: inout std_logic; -- Secondary I2C clock line for SFP upstream
         gpio_pins: out std_logic_vector(5 downto 0) -- general purpose pins. For now set as outputs for testing
 	);
 
@@ -95,8 +97,10 @@ architecture rtl of top is
 	signal ipb_out: ipb_wbus;
 	signal ipb_in: ipb_rbus;
 	signal inf_leds: std_logic_vector(1 downto 0);
-	signal s_i2c_scl_enb         : std_logic;
-    signal s_i2c_sda_enb         : std_logic;
+	signal s_i2c_scl_enb         : std_logic; -- Signal for main I2C master
+    signal s_i2c_sda_enb         : std_logic; -- Signal for main I2C master
+    signal s_i2c_scl_sfp_enb         : std_logic; -- Signal for secondary I2C master
+    signal s_i2c_sda_sfp_enb         : std_logic; -- Signal for secondary I2C master
     signal clk_gen : std_logic; --signal for the clock from Si5345
 	
     
@@ -153,6 +157,8 @@ begin
 
     i2c_scl <= '0' when (s_i2c_scl_enb = '0') else 'Z';
     i2c_sda <= '0' when (s_i2c_sda_enb = '0') else 'Z';
+    i2c_scl_sfp <= '0' when (s_i2c_scl_sfp_enb = '0') else 'Z';
+    i2c_sda_sfp <= '0' when (s_i2c_sda_sfp_enb = '0') else 'Z';
     
 
 	slaves: entity work.ipbus_fanout_slaves
@@ -166,9 +172,13 @@ begin
 			userled => userled,
 			i2c_scl_b => i2c_scl,
             i2c_sda_b => i2c_sda,
+            i2c_scl_sfp_b => i2c_scl_sfp,
+            i2c_sda_sfp_b => i2c_sda_sfp,
             i2c_rst_b => i2c_reset,
             i2c_scl_enb_o => s_i2c_scl_enb,
-            i2c_sda_enb_o => s_i2c_sda_enb
+            i2c_sda_enb_o => s_i2c_sda_enb,
+            i2c_scl_enb_sfp_o => s_i2c_scl_sfp_enb,
+            i2c_sda_enb_sfp_o => s_i2c_sda_sfp_enb
 		);
 	
 	output_buffers_loop: for iBuf in 0 to 2 generate

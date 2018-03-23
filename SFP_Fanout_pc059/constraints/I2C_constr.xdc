@@ -11,9 +11,14 @@ set_property IOSTANDARD LVCMOS25 [get_ports i2c_sda]
 set_property PACKAGE_PIN P18 [get_ports i2c_sda]
 
 
+## Secondary I2C core for SFP upstream
+set_property IOSTANDARD LVCMOS25 [get_ports i2c_scl_sfp]
+set_property PACKAGE_PIN G2 [get_ports i2c_scl_sfp]
 
-#create_clock -period 25.000 -name sysclk_40_i_p -waveform {0.000 12.500} [get_ports sysclk_40_i_p]
-#set_clock_groups -asynchronous -group {clk_enclustra I_1 mmcm_n_10 mmcm_n_6 mmcm_n_8 clk_ipb_i} -group {sysclk_40_i_p I pll_base_inst_n_2 s_clk160}
+set_property IOSTANDARD LVCMOS25 [get_ports i2c_sda_sfp]
+set_property PACKAGE_PIN H2 [get_ports i2c_sda_sfp]
+
+
 
 # -------------------------------------------------------------------------------------------------
 

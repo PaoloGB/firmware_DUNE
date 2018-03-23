@@ -42,7 +42,7 @@ use work.ipbus_decode_fanout.all;
 
 entity ipbus_fanout_slaves is
     generic(
-        constant FW_VERSION : unsigned(31 downto 0):= X"059a000C" -- Firmware revision. Remember to change this as needed.
+        constant FW_VERSION : unsigned(31 downto 0):= X"059a000E" -- Firmware revision. Remember to change this as needed.
     );
 	port(
 		ipb_clk: in std_logic;
@@ -54,9 +54,13 @@ entity ipbus_fanout_slaves is
 		userled: out std_logic;
 		i2c_scl_b: in std_logic; -- I2C clock line
         i2c_sda_b: in std_logic; -- I2C data line
+        i2c_scl_sfp_b: in std_logic; -- I2C clock line (secondary)
+        i2c_sda_sfp_b: in std_logic; -- I2C data line (secondary)
         i2c_rst_b: out std_logic; --Reset line for the expander serial lines
         i2c_scl_enb_o : OUT    std_logic;
-        i2c_sda_enb_o : OUT    std_logic
+        i2c_sda_enb_o : OUT    std_logic;
+        i2c_scl_enb_sfp_o : OUT    std_logic;
+        i2c_sda_enb_sfp_o : OUT    std_logic
 	);
 
 end ipbus_fanout_slaves;
@@ -68,6 +72,8 @@ architecture rtl of ipbus_fanout_slaves is
 	signal ctrl, stat: ipb_reg_v(0 downto 0);
 	signal s_i2c_scl_enb         : std_logic;
     signal s_i2c_sda_enb         : std_logic;
+    signal s_i2c_scl_sfp_enb         : std_logic;
+    signal s_i2c_sda_sfp_enb         : std_logic;
 	
     COMPONENT i2c_master
     PORT (
@@ -127,35 +133,13 @@ begin
 			q => open
 		);
 
----- Slave 2: 1kword RAM
-
---	slave4: entity work.ipbus_ram
---		generic map(ADDR_WIDTH => 10)
---		port map(
---			clk => ipb_clk,
---			reset => ipb_rst,
---			ipbus_in => ipbw(N_SLV_RAM),
---			ipbus_out => ipbr(N_SLV_RAM)
---		);
-	
----- Slave 3: peephole RAM
-
---	slave5: entity work.ipbus_peephole_ram
---		generic map(ADDR_WIDTH => 10)
---		port map(
---			clk => ipb_clk,
---			reset => ipb_rst,
---			ipbus_in => ipbw(N_SLV_PRAM),
---			ipbus_out => ipbr(N_SLV_PRAM)
---		);
-
-    -- I2C master to control lines to slaves on board
+-- I2C master to control lines to slaves on board
 
     --i2c_scl_b <= '0' when (s_i2c_scl_enb = '0') else 'Z';
     --i2c_sda_b <= '0' when (s_i2c_sda_enb = '0') else 'Z';
+    
     i2c_rst_b <= '1';
-		
-    I3 : i2c_master
+	I3_main_I2Cmaster : i2c_master
     PORT MAP (
         i2c_scl_i     => i2c_scl_b,
         i2c_sda_i     => i2c_sda_b,
@@ -168,5 +152,20 @@ begin
     );
     i2c_scl_enb_o <= s_i2c_scl_enb;
     i2c_sda_enb_o <= s_i2c_sda_enb;
+
+    I4_secondary_I2Cmaster : i2c_master
+    PORT MAP (
+        i2c_scl_i     => i2c_scl_sfp_b,
+        i2c_sda_i     => i2c_sda_sfp_b,
+        ipbus_clk_i   => ipb_clk,
+        ipbus_i       => ipbw(N_SLV_I2C_1),
+        ipbus_reset_i => ipb_rst,
+        i2c_scl_enb_o => s_i2c_scl_sfp_enb,
+        i2c_sda_enb_o => s_i2c_sda_sfp_enb,
+        ipbus_o       => ipbr(N_SLV_I2C_1)
+    );
+    i2c_scl_enb_sfp_o <= s_i2c_scl_sfp_enb;
+    i2c_sda_enb_sfp_o <= s_i2c_sda_sfp_enb;
+
 
 end rtl;

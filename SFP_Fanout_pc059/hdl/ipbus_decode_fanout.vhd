@@ -17,8 +17,8 @@ package ipbus_decode_fanout is
 -- START automatically  generated VHDL the Fri Oct  7 12:10:31 2016 
   constant N_SLV_CTRL_REG: integer := 0; --for tests
   constant N_SLV_REG: integer := 1; -- for tests
-  constant N_SLV_I2C_0: integer := 2; --I2C core for FANOUT
-  constant N_SLV_DUT: integer :=3; -- currently not used
+  constant N_SLV_I2C_0: integer := 2; --I2C master for FANOUT
+  constant N_SLV_I2C_1: integer :=3; -- secondary I2C master for SFP upstream
   constant N_SLV_SHUT: integer :=4; -- currently not used
   constant N_SLV_EVBUF: integer :=5; -- currently not used
   constant N_SLV_EVFMT: integer :=6; -- currently not used
@@ -44,7 +44,7 @@ package body ipbus_decode_fanout is
     elsif std_match(addr, "----------------0000----------1-") then
         sel := ipbus_sel_t(to_unsigned(N_SLV_REG, IPBUS_SEL_WIDTH)); -- reg / base 0x00000002 / mask 0x00003002
     elsif std_match(addr, "----------------0001------------") then
-        sel := ipbus_sel_t(to_unsigned(N_SLV_DUT, IPBUS_SEL_WIDTH)); -- ram / base 0x00001000 / mask 0x00003000
+        sel := ipbus_sel_t(to_unsigned(N_SLV_I2C_1, IPBUS_SEL_WIDTH)); -- ram / base 0x00001000 / mask 0x00003000
     elsif std_match(addr, "----------------0010----------0-") then
         sel := ipbus_sel_t(to_unsigned(N_SLV_SHUT, IPBUS_SEL_WIDTH)); -- shutter / base 0x00002000 / mask 0x00003002
     elsif std_match(addr, "----------------0011------------") then
