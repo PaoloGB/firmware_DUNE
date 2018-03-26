@@ -5,6 +5,7 @@ Scripts
 
 ## Backup files
 *.py~
+*.pyc
 *.md~
 *.sh~
 *.*~
