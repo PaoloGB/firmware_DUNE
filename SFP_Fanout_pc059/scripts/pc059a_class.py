@@ -9,7 +9,8 @@ sys.path.append('/users/phpgb/workspace/myFirmware/AIDA/packages')
 import uhal;
 import pprint;
 import time
-from I2CuHal import I2CCore
+#from I2CuHal import I2CCore # I2C library for uhal. This one uses old naming
+from I2CuHal2 import I2CCore # I2C library for uhal. This one uses D. Newbold's naming
 from si5345 import si5345 # Library for clock chip
 from AD5665R import AD5665R # Library for DAC
 from PCA9539PW import PCA9539PW # Library for serial line expander
@@ -24,15 +25,16 @@ class pc059a:
         self.manager= uhal.ConnectionManager(man_file)
         self.hw = self.manager.getDevice(self.dev_name)
 
-        self.fwVersion = self.hw.getNode("version").read()
-        self.hw.dispatch()
-        print "--", self.dev_name, "FIRMWARE VERSION= " , hex(self.fwVersion)
+        #self.fwVersion = self.hw.getNode("version").read()
+        #self.hw.dispatch()
+        #print "--", self.dev_name, "FIRMWARE VERSION= " , hex(self.fwVersion)
 
     # Instantiate a I2C core to configure components
-        self.i2c_master= I2CCore(self.hw, 10, 5, "i2c_master", None)
+        #self.i2c_master= I2CCore(self.hw, 10, 5, "i2c_master", None)
+        self.i2c_master= I2CCore(self.hw, 10, 5, "io.i2c", None)
 
     # Instantiate a secondary I2C core for SFP cage (not working yet)
-        #self.i2c_secondary= I2CCore(self.hw, 10, 5, "i2c_sfp", None)
+        self.i2c_secondary= I2CCore(self.hw, 10, 5, "io.usfp_i2c", None)
 
     # Enable the I2C interface on enclustra
         enableCore= True #Only need to run this once, after power-up
@@ -100,6 +102,21 @@ class pc059a:
         res= self.i2c_master.read( myslave, nwords)
         print "\tPost RegDir: ", res
 
+    def _getSN(self):
+        """Return the unique ID from the EEPROM on the board"""
+        epromcontent=self.zeEEPROM.readEEPROM(0xfa, 6)
+        print "  ", self.dev_name, "serial number (EEPROM):"
+        result="\t"
+        for iaddr in epromcontent:
+            result+="%02x "%(iaddr)
+        print result
+        return epromcontent
+
+    def _getSFPfault(self):
+        """Read the status of the FAULT pins for the downstream SFP ports"""
+        res= self.exp_SFP.getInputs(1)[0]
+        return res
+
     def _LEDallOff(self):
         self.exp_LED.setOutputs(0, 0x0)
         old1= self.exp_LED.getInputs(1)[0]
@@ -129,16 +146,6 @@ class pc059a:
         self.exp_LED.setOutputs(0, old0)
         self.exp_LED.setOutputs(1, old1)
 
-    def _getSN(self):
-        """Return the unique ID from the EEPROM on the board"""
-        epromcontent=self.zeEEPROM.readEEPROM(0xfa, 6)
-        print "  ", self.dev_name, "serial number (EEPROM):"
-        result="\t"
-        for iaddr in epromcontent:
-            result+="%02x "%(iaddr)
-        print result
-        return epromcontent
-
     def _set_bit(self, v, index, x):
         """Set the index:th bit of v to 1 if x is truthy, else to 0, and return the new value."""
         if (index == -1):
@@ -149,6 +156,28 @@ class pc059a:
             if x:
                 v |= mask         # If x was True, set the bit indicated by the mask.
         return v
+
+    def _setEQ(self, iSFP, state, verbose= False):
+        """ Configure the LVDS buffer equalizer for the i-th SFP port (downstream).
+            There are 4 levels of equalization:
+            -0: off
+            -1: low (~ 4 dB at 1.56 GHZ)
+            -2: med (~ 8 dB at 1.56 GHZ)
+            -3: high (~ 16 dB at 1.56 GHZ)
+        """
+        if ( (0 <= iSFP <= 7) and (0<= state <= 3) ):
+            res= [0, 0]
+            bitstate= [0, 0]
+            newState= [0, 0]
+            for iBank in range(0,2):
+                res[iBank]= self.exp_EQ.getInputs(iBank)[0]
+                bitstate[iBank]= (state >> iBank) & 0x1
+                newState[iBank]= self._set_bit(res[iBank], iSFP, bitstate[iBank])
+                self.exp_EQ.setOutputs(iBank, newState[iBank])
+                if verbose:
+                    print "SFP", iSFP, "old" , bin(res[iBank]), "bit", bitstate[iBank], "new", bin(newState[iBank])
+        else:
+            print "setEQ: value out of range. iSFP must be in range [0, 7] and state in [0, 3]"
 
     def _setLED(self, iLED, status):
         """Switch one of the leds ON or OFF
@@ -163,7 +192,145 @@ class pc059a:
             newState= ( self._set_bit(res, 11-(iLED-4), status) ) & 0xFF
             self.exp_LED.setOutputs(1, newState)
         else:
-            print "_setLED: index out of range. iLED must be comprised between 0 and 11"
+            print "setLED: index out of range. iLED must be comprised between 0 and 11"
+
+    def _sfpEnable(self, iSFP, enable= True):
+        """Disable/Enable one of the SFP downstream by asserting or deasserting the TX_DISABLE pin"""
+        if  (0 <= iSFP <= 7):
+            res= self.exp_SFP.getInputs(0)[0]
+            newState= ( self._set_bit(res, iSFP, not enable) ) & 0xFF
+            self.exp_SFP.setOutputs(0, newState)
+
+    def _sfpSelect(self, iSFP, EQstate, verbose= 0):
+        """Select a downstream SFP port
+        - connect the iSFP-th MUX to the CDR
+        - connect the I2C MULTIPLEXER so that the iSFP-th port is visible on the busy
+        - set the equalizer to the chosen value
+        - enable the iSFP-th LED, swith off all others
+        """
+        if  (0 <= iSFP <= 7):
+            print "  Routing signals to SFP", iSFP
+            self.ipb_setMUXchannel(iSFP)
+            self.mux_I2C.setActiveChannel(iSFP)
+            self._setEQ(iSFP, EQstate, verbose)
+            self._LEDallOff()
+            self._setLED(iSFP, 1)
+        else:
+            print "  sfpSelect: iSFP must be in range [0: 7]"
+
+
+####IPBUS functionalities. Might change when address map changes
+    def ipb_setMUXchannel(self, iChannel):
+        """Write to IPBus register to define which channel of the multiplexer is connected"""
+        if  (0 <= iChannel <= 7):
+            self.hw.getNode("io.csr.ctrl.mux").write(iChannel)
+            self.hw.dispatch()
+        else:
+            print "iChannel must be comprised between 0 and 7"
+
+    def ipb_getMUXchannel(self):
+        """Read from IPBus register which channel of the multiplexer is connected"""
+        res= self.hw.getNode("io.csr.ctrl.mux").read()
+        self.hw.dispatch()
+        return res
+
+    def ipb_prbs_init(self):
+        """Initialize PRBS generator"""
+        print "  INITIALIZING PRBS"
+        cmd = int("0x1", 16)
+        self.hw.getNode("csr.ctrl.prbs_init").write(cmd)
+        self.hw.dispatch()
+        cmd = int("0x0", 16)
+        self.hw.getNode("csr.ctrl.prbs_init").write(cmd)
+        self.hw.dispatch()
+
+    def ipb_getResets(self):
+        """Query the status of the various reset lines. A 1 indicates that the line is being reset.
+        reset, soft_rst, nuke, pll_rst, mux_rst, i2c_rst"""
+        myRST= []
+        rst= self.hw.getNode("io.csr.ctrl.rst").read()
+        self.hw.dispatch()
+        myRST.append(int(rst))
+
+        rst_soft= self.hw.getNode("io.csr.ctrl.soft_rst").read()
+        self.hw.dispatch()
+        myRST.append(int(rst_soft))
+
+        nuke= self.hw.getNode("io.csr.ctrl.nuke").read()
+        self.hw.dispatch()
+        myRST.append(int(nuke))
+
+        rst_pll= self.hw.getNode("io.csr.ctrl.rst_pll").read()
+        self.hw.dispatch()
+        myRST.append(int(rst_pll))
+
+        rst_mux= self.hw.getNode("io.csr.ctrl.rst_i2cmux").read()
+        self.hw.dispatch()
+        myRST.append(int(rst_mux))
+
+        rst_i2c= self.hw.getNode("io.csr.ctrl.rst_i2c").read()
+        self.hw.dispatch()
+        myRST.append(int(rst_i2c))
+        return myRST
+
+    def ipb_getzflags(self):
+        """Query the status of the various fglags. A 1 indicates that a valid pattern has been receivedself.
+        [sfp, hdmi, upstream sfp]"""
+        myFlags= []
+        f_sfp= self.hw.getNode("io.csr.ctrl.rst").read()
+        self.hw.dispatch()
+        myFlags.append(int(f_sfp))
+
+        f_hdmi= self.hw.getNode("io.csr.ctrl.soft_rst").read()
+        self.hw.dispatch()
+        myFlags.append(int(f_hdmi))
+
+        f_upssfp= self.hw.getNode("io.csr.ctrl.nuke").read()
+        self.hw.dispatch()
+        myFlags.append(int(f_upssfp))
+
+        return myFlags
+
+    def ipb_readFrequency(self, channel):
+        """Query the IPBus block to read the clock frequency. Channel can either be 0 (PLL) or 1 (CDR clock)"""
+        """Not working?"""
+        if  (0 <= channel <= 1):
+            self.hw.getNode("io.freq.ctrl.chan_sel").write(channel)
+            self.hw.dispatch()
+            res= self.hw.getNode("io.freq.freq.valid").read()
+            self.hw.dispatch()
+            print "  valid frequency?", res
+            if res:
+                fread= self.hw.getNode("io.freq.freq.count").read()
+                self.hw.dispatch()
+                return fread
+        else:
+            print "channel must be comprised between 0 and 1"
+            return 0
+
+    def ipb_reset(self):
+        """Reset the board"""
+        print "RESETTING firmware"
+        cmd = int("0x1", 16)
+        self.hw.getNode("io.csr.ctrl.rst").write(cmd)
+        self.hw.dispatch()
+        cmd = int("0x0", 16)
+        self.hw.getNode("io.csr.ctrl.rst").write(cmd)
+        self.hw.dispatch()
+
+    def ipb_setLED(self, iLED, status):
+        """LED on/off for the 3 indicators connected to FPGA"""
+        if 0<= iLED <= 2:
+            res= self.ipb_getLED()
+            newState= self._set_bit(res, iLED, status)
+            self.hw.getNode("io.csr.ctrl.leds").write(newState)
+            self.hw.dispatch()
+
+    def ipb_getLED(self):
+        """LED status for the 3 indicators connected to FPGA"""
+        res= self.hw.getNode("io.csr.ctrl.leds").read()
+        self.hw.dispatch()
+        return res
 
 ##################################################################################################################################
 ##################################################################################################################################
@@ -183,45 +350,73 @@ class pc059a:
 
     # INITIALIZE EQUALIZER EXPANDER
         #BANK 0
-        self.exp_EQ.setOutputs(0, 0xFF)
+        self.exp_EQ.setOutputs(0, 0x00)
         res= self.exp_EQ.getInputs(0)
-        print "  EXP_EQ read back bank 0: 0x%X" % res[0]
+        print "\tEXP_EQ read back bank 0: 0x%X" % res[0]
         #BANK 1
-        self.exp_EQ.setOutputs(1, 0xFF)
+        self.exp_EQ.setOutputs(1, 0x00)
         res= self.exp_EQ.getInputs(1)
-        print "  EXP_EQ read back bank 1: 0x%X" % res[0]
+        print "\tEXP_EQ read back bank 1: 0x%X" % res[0]
 
     # INITIALIZE SFP EXPANDER
         #BANK 0
         self.exp_SFP.setOutputs(0, 0xFF)
         res= self.exp_SFP.getInputs(0)
-        print "  EXP_SFP read back bank 0: 0x%X" % res[0]
+        print "\tEXP_SFP read back bank 0: 0x%X" % res[0]
         #BANK 1
         self.exp_SFP.setOutputs(1, 0xFF)
         res= self.exp_SFP.getInputs(1)
-        print "  EXP_SFP read back bank 1: 0x%X" % res[0]
-
-        print "  ", self.dev_name, " INITIALIZED"
+        print "\tEXP_SFP read back bank 1: 0x%X" % res[0]
 
     # INITIALIZE LED EXPANDER
         #BANK0
         self.exp_LED.setOutputs(0, 0x00)
         res= self.exp_LED.getInputs(0)
-        print "  EXP_LED read back bank 0: 0x%X" % res[0]
+        print "\tEXP_LED read back bank 0: 0x%X" % res[0]
         #BANK1
         self.exp_LED.setOutputs(1, 0x0F)
         res= self.exp_LED.getInputs(1)
-        print "  EXP_LED read back bank 1: 0x%X" % res[0]
+        print "\tEXP_LED read back bank 1: 0x%X" % res[0]
 
     # DISABLE ALL CHANNELS FOR I2C multiplexer
         self.mux_I2C.disableAllChannels(True)
-        print "  I2C MUX (should be 0)", self.mux_I2C.getChannelStatus(True)
+        print "\tI2C MUX (should be 0)", self.mux_I2C.getChannelStatus(True)
+
+        print "  ", self.dev_name, " INITIALIZED"
 
 ##################################################################################################################################
 ##################################################################################################################################
-    def start(self, logtimestamps=False):
+    def start(self):
         print "--", self.dev_name, " STARTING..."
-        self._LEDselfcheck()
+        #self._LEDselfcheck()
+        #self._setEQ(iEQ, 3, True)
+        #self._sfpEnable(3, True)
+        #print bin(self._getSFPfault())
+        self.ipb_setLED(1,1)
+
+    # Reset board
+        self.ipb_reset()
+
+    # Query status of reset dut_lines
+        print "  RESETS [reset, soft_rst, nuke, pll_rst, mux_rst, i2c_rst]"
+        print "\t", self.ipb_getResets()
+
+    # Initialize PRBS
+        self.ipb_prbs_init()
+
+    # Read frequency
+        self.ipb_readFrequency(0)
+
+    # Get get zflags
+        print "  zFLAGS [SFP, HDMI, UPS_SFP]="
+        print "\t", self.ipb_getzflags()
+
+    # Select one of the SFP ports downstream
+        self._sfpSelect(1, 2, 0)
+        time.sleep(0.5)
+        self._sfpSelect(2, 2, 0)
+        time.sleep(0.5)
+        self._sfpSelect(7, 2, 0)
 
         print "  ", self.dev_name, " RUNNING"
 

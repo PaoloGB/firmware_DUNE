@@ -14,30 +14,35 @@ import cmd
 
 class MyPrompt(cmd.Cmd):
 
+    def do_start(self, args):
+    	"""Starts a PC059A run"""
+    	print "COMMAND RECEIVED: START RUN"
+        hw_pc059a.start()
+        return
 
-    def do_startRun(self, args):
-	"""Starts a PC059A run"""
-	print "COMMAND RECEIVED: STARTING RUN"
-	#startTLU( uhalDevice = self.hw, pychipsBoard = self.board,  writeTimestamps = ( options.writeTimestamps == "True" ) )
-	#print self.hw
-
-    def do_stopRun(self, args):
-	"""Stops a PC059A run"""
-	print "COMMAND RECEIVED: STOP RUN"
-
+    def do_terminate(self, args):
+    	"""Stops a PC059A run"""
+    	print "COMMAND RECEIVED: STOP RUN"
+        return
 
     def do_quit(self, args):
         """Quits the program."""
-        print "COMMAND RECEIVED: QUITTING SCRIPT."
+        print "COMMAND RECEIVED: QUIT INTERFACE"
         #raise SystemExit
-	return True
+        return True
 
 #################################################
 if __name__ == "__main__":
-    hw_pc059a= pc059a("sfpfanout", "file://./pc059_connection.xml")
-    hw_pc059a.initialize()
-    hw_pc059a.start()
-    hw_pc059a.stop()
-    # prompt = MyPrompt()
-    # prompt.prompt = '>> '
-    # prompt.cmdloop("Welcome to miniTLU test console.\nType HELP for a list of commands.")
+
+    prompt = MyPrompt()
+    prompt.prompt = '>> '
+
+    hw_pc059a = pc059a("sfpfanout", "file://./pc059_connection.xml")
+#    hw_pc059a.initialize()
+
+
+    # Start interactive prompt
+    print "===================================================================="
+    print "=======================PC059A TEST CONSOLE=========================="
+    print "===================================================================="
+    prompt.cmdloop("Type 'help' for a list of commands.")

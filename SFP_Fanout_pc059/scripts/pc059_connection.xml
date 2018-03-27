@@ -2,5 +2,5 @@
 
 <connections>
   <connection id="sfpfanout" uri="ipbusudp-2.0://192.168.200.28:50001"
-   address_table="file://./pc059_addrmap.xml" />
+   address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180327_1314/addrtab/top.xml" />
 </connections>
