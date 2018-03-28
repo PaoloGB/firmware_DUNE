@@ -209,7 +209,7 @@ class pc059a:
         - enable the iSFP-th LED, swith off all others
         """
         if  (0 <= iSFP <= 7):
-            print "  Routing signals to SFP", iSFP
+            print "  ROUTING SIGNALS TO SFP #", iSFP
             self.ipb_setMUXchannel(iSFP)
             self.mux_I2C.setActiveChannel(iSFP)
             self._setEQ(iSFP, EQstate, verbose)
@@ -217,7 +217,6 @@ class pc059a:
             self._setLED(iSFP, 1)
         else:
             print "  sfpSelect: iSFP must be in range [0: 7]"
-
 
 ####IPBUS functionalities. Might change when address map changes
     def ipb_setMUXchannel(self, iChannel):
@@ -310,7 +309,7 @@ class pc059a:
 
     def ipb_reset(self):
         """Reset the board"""
-        print "RESETTING firmware"
+        print "  RESETTING firmware"
         cmd = int("0x1", 16)
         self.hw.getNode("io.csr.ctrl.rst").write(cmd)
         self.hw.dispatch()
@@ -398,8 +397,11 @@ class pc059a:
         self.ipb_reset()
 
     # Query status of reset dut_lines
-        print "  RESETS [reset, soft_rst, nuke, pll_rst, mux_rst, i2c_rst]"
+        print "  RESET status [reset, soft_rst, nuke, pll_rst, mux_rst, i2c_rst]"
         print "\t", self.ipb_getResets()
+
+    # Select one of the SFP ports downstream
+        self._sfpSelect(0, 2, 0)
 
     # Initialize PRBS
         self.ipb_prbs_init()
@@ -411,12 +413,8 @@ class pc059a:
         print "  zFLAGS [SFP, HDMI, UPS_SFP]="
         print "\t", self.ipb_getzflags()
 
-    # Select one of the SFP ports downstream
-        self._sfpSelect(1, 2, 0)
-        time.sleep(0.5)
-        self._sfpSelect(2, 2, 0)
-        time.sleep(0.5)
-        self._sfpSelect(7, 2, 0)
+
+
 
         print "  ", self.dev_name, " RUNNING"
 
