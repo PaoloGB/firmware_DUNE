@@ -181,11 +181,11 @@ class pc059a:
 
     def _setLED(self, iLED, status):
         """Switch one of the leds ON or OFF
-        # LED 0:7 = Green SFP indicators (left to right)
+        # LED 0:7 = Green SFP indicators (right to left)
         # LED 8:11 = Status indicators (left to right). 11 is red, all the rest green"""
         if  (0 <= iLED <= 7):
             res= self.exp_LED.getInputs(0)[0]
-            newState= ( self._set_bit(res, iLED, status) ) & 0xFF
+            newState= ( self._set_bit(res, 7-iLED, status) ) & 0xFF
             self.exp_LED.setOutputs(0, newState)
         elif (8 <= iLED <= 11):
             res= self.exp_LED.getInputs(1)[0]
@@ -206,6 +206,7 @@ class pc059a:
         - connect the iSFP-th MUX to the CDR
         - connect the I2C MULTIPLEXER so that the iSFP-th port is visible on the busy
         - set the equalizer to the chosen value
+        - set the TX_DISABLE low
         - enable the iSFP-th LED, swith off all others
         """
         if  (0 <= iSFP <= 7):
@@ -213,6 +214,7 @@ class pc059a:
             self.ipb_setMUXchannel(iSFP)
             self.mux_I2C.setActiveChannel(iSFP)
             self._setEQ(iSFP, EQstate, verbose)
+            self._sfpEnable(iSFP, True)
             self._LEDallOff()
             self._setLED(iSFP, 1)
         else:
@@ -334,7 +336,7 @@ class pc059a:
 ##################################################################################################################################
 ##################################################################################################################################
 
-    def initialize(self):
+    def initialize(self, verbose= False):
         print "--", self.dev_name, " INITIALIZING..."
 
     # READ CONTENT OF EPROM VIA I2C
@@ -344,8 +346,15 @@ class pc059a:
         doClock= False
         if doClock:
             clockfile= "./../../bitFiles/pc059_Si5345.txt"
-            self._configureClock(clockfile, False)
+            self._configureClock(clockfile, verbose)
             self.zeClock.checkDesignID()
+        self.zeClock.checkDesignID()
+        iopower= self.zeClock.readRegister(0x0949, 1)
+        print "  Si5345 IO power (REG 0x0949): 0x%X" % iopower[0]
+        lol= self.zeClock.readRegister(0x000E, 1)
+        print "  Si5345 LOL (REG 0x000E): 0x%X" % lol[0]
+        los= self.zeClock.readRegister(0x000D, 1)
+        print "  Si5345 OOF and LOS (REG 0x000D): 0x%X" % los[0]
 
     # INITIALIZE EQUALIZER EXPANDER
         #BANK 0
@@ -401,7 +410,7 @@ class pc059a:
         print "\t", self.ipb_getResets()
 
     # Select one of the SFP ports downstream
-        self._sfpSelect(0, 2, 0)
+        self._sfpSelect(3, 2, 0)
 
     # Initialize PRBS
         self.ipb_prbs_init()

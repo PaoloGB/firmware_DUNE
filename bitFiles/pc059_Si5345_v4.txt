@@ -1,12 +1,12 @@
 # Si538x/4x Registers Script
 # 
 # Part: Si5345
-# Project File: P:\cad\designs\uob-hep-pc059a\trunk\design_files\worklib\pc059a_toplevel\physical\ClockConfiguration\pc059_Si5345-v5.slabtimeproj
-# Design ID: pc059_05
+# Project File: P:\cad\designs\uob-hep-pc059a\trunk\design_files\worklib\pc059a_toplevel\physical\ClockConfiguration\pc059_Si5345-v4.slabtimeproj
+# Design ID: pc059_04
 # Includes Pre/Post Download Control Register Writes: Yes
 # Die Revision: A2
-# Creator: ClockBuilder Pro v2.22 [2018-03-27]
-# Created On: 2018-03-29 11:17:14 GMT+01:00
+# Creator: ClockBuilder Pro v2.21 [2018-01-19]
+# Created On: 2018-03-29 10:27:23 GMT+01:00
 Address,Data
 # 
 # Start configuration preamble
@@ -46,7 +46,7 @@ Address,Data
 0x003B,0x00
 0x003C,0x36
 0x003D,0x00
-0x003F,0xF8
+0x003F,0xFF
 0x0040,0x04
 0x0041,0x0E
 0x0042,0x0E
@@ -246,7 +246,7 @@ Address,Data
 0x026F,0x39
 0x0270,0x5F
 0x0271,0x30
-0x0272,0x35
+0x0272,0x34
 0x0302,0x00
 0x0303,0x00
 0x0304,0x00

@@ -20,6 +20,11 @@ class MyPrompt(cmd.Cmd):
         hw_pc059a.start()
         return
 
+    def do_initialize(self, args):
+        """Initialize PC059A"""
+        hw_pc059a.initialize(0)
+        return
+
     def do_terminate(self, args):
     	"""Stops a PC059A run"""
     	print "COMMAND RECEIVED: STOP RUN"

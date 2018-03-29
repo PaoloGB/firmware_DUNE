@@ -7,7 +7,7 @@ import sys
 sys.path.append('/users/phpgb/workspace/myFirmware/AIDA/packages')
 
 import uhal
-from I2CuHal import I2CCore
+from I2CuHal2 import I2CCore
 import time
 #import miniTLU
 from si5345 import si5345
@@ -21,14 +21,15 @@ manager = uhal.ConnectionManager("file://./pc059_connection.xml")
 hw = manager.getDevice("sfpfanout")
 
 # hw.getNode("A").write(255)
-reg = hw.getNode("version").read()
-hw.dispatch()
-print "CHECK REG= ", hex(reg)
+#reg = hw.getNode("version").read()
+#hw.dispatch()
+#print "CHECK REG= ", hex(reg)
 
 
 # #Main I2C core
 print ("Instantiating master I2C core:")
-master_I2C= I2CCore(hw, 12800, 10, "i2c_master", None)
+#master_I2C= I2CCore(hw, 12800, 10, "i2c_master", None)
+master_I2C= I2CCore(hw, 10, 5, "io.i2c", None)
 master_I2C.state()
 
 # #Secondary I2C core for SFP
@@ -75,7 +76,7 @@ if doClock:
   #zeClock.setPage(0, True)
   #zeClock.getPage(True)
   clkRegList= zeClock.parse_clk("./../../bitFiles/pc059_Si5345.txt")
-  zeClock.writeConfiguration(clkRegList)######
+  zeClock.writeConfiguration(clkRegList, True)######
   zeClock.writeRegister(0x0536, [0x0B]) #Configures manual switch of inputs
   zeClock.writeRegister(0x0949, [0x0F]) #Enable all inputs
   zeClock.writeRegister(0x052A, [0x05]) #Configures source of input
@@ -85,7 +86,7 @@ print "  Clock IO power (REG 0x0949): 0x%X" % iopower[0]
 lol= zeClock.readRegister(0x000E, 1)
 print "  Clock LOL (REG 0x000E): 0x%X" % lol[0]
 los= zeClock.readRegister(0x000D, 1)
-print "  Clock LOS (REG 0x000D): 0x%X" % los[0]
+print "  Clock OOF and LOS (REG 0x000D): 0x%X" % los[0]
 #CLOCK CONFIGURATION END
 
 #######################################################
