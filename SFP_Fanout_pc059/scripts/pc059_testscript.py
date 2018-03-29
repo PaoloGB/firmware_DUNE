@@ -69,14 +69,14 @@ if doEeprom:
 
 #######################################################
 #CLOCK CONFIGURATION BEGIN
-doClock = False
+doClock = True
 zeClock=si5345(master_I2C, 0x68)
 res= zeClock.getDeviceVersion()
 if doClock:
   #zeClock.setPage(0, True)
   #zeClock.getPage(True)
   clkRegList= zeClock.parse_clk("./../../bitFiles/pc059_Si5345.txt")
-  zeClock.writeConfiguration(clkRegList, True)######
+  zeClock.writeConfiguration(clkRegList, 1)######
   zeClock.writeRegister(0x0536, [0x0B]) #Configures manual switch of inputs
   zeClock.writeRegister(0x0949, [0x0F]) #Enable all inputs
   zeClock.writeRegister(0x052A, [0x05]) #Configures source of input

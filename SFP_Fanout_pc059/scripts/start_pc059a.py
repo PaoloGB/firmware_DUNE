@@ -14,6 +14,18 @@ import cmd
 
 class MyPrompt(cmd.Cmd):
 
+    def do_connect(self, args):
+        """Configures the board to connect a specific SFP port using the multiplexersself.
+        Syntax: connect #
+        Where N must be an integer between 0 and 7."""
+        arglist = args.split()
+        if len(arglist) == 0:
+            print "\tno port specified. ignoring the command"
+        else:
+            results = list(map(int, arglist))
+            iSFP= results[0]
+            hw_pc059a._sfpSelect(iSFP, 2, 0)
+
     def do_start(self, args):
     	"""Starts a PC059A run"""
     	print "COMMAND RECEIVED: START RUN"

@@ -346,7 +346,7 @@ class pc059a:
         doClock= False
         if doClock:
             clockfile= "./../../bitFiles/pc059_Si5345.txt"
-            self._configureClock(clockfile, verbose)
+            self._configureClock(clockfile, 1)
             self.zeClock.checkDesignID()
         self.zeClock.checkDesignID()
         iopower= self.zeClock.readRegister(0x0949, 1)
