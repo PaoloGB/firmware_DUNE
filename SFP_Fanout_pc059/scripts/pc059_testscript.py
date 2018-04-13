@@ -69,7 +69,7 @@ if doEeprom:
 
 #######################################################
 #CLOCK CONFIGURATION BEGIN
-doClock = True
+doClock = False
 zeClock=si5345(master_I2C, 0x68)
 res= zeClock.getDeviceVersion()
 if doClock:
@@ -138,7 +138,7 @@ if doIC27:
   #BANK 0
   IC27.setInvertReg(0, 0x00)# 0= normal
   IC27.setIOReg(0, 0x00)# 0= output (LED) <<<<<<<<<<<<<<<<<<<
-  IC27.setOutputs(0, 0xAA)
+  IC27.setOutputs(0, 0xFF)
   res= IC27.getInputs(0)
   print "IC27 read back bank 0: 0x%X" % res[0]
   #BANK 1

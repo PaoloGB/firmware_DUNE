@@ -332,7 +332,13 @@ class pc059a:
         res= self.hw.getNode("io.csr.ctrl.leds").read()
         self.hw.dispatch()
         return res
-
+        
+    def ipb_allLEDs(self):
+        self.ipb_setLED(0, 1)
+        self.ipb_setLED(1, 1)
+        self.ipb_setLED(2, 1)
+        self._LEDallOn()
+        
 ##################################################################################################################################
 ##################################################################################################################################
 
@@ -343,7 +349,7 @@ class pc059a:
         self._getSN()
 
     # CONFIGURE CLOCK
-        doClock= False
+        doClock= True
         if doClock:
             clockfile= "./../../bitFiles/pc059_Si5345.txt"
             self._configureClock(clockfile, 1)
@@ -391,6 +397,8 @@ class pc059a:
         print "\tI2C MUX (should be 0)", self.mux_I2C.getChannelStatus(True)
 
         print "  ", self.dev_name, " INITIALIZED"
+        
+        self.ipb_allLEDs()
 
 ##################################################################################################################################
 ##################################################################################################################################
@@ -403,7 +411,7 @@ class pc059a:
         self.ipb_setLED(1,1)
 
     # Reset board
-        self.ipb_reset()
+        #self.ipb_reset()
 
     # Query status of reset dut_lines
         print "  RESET status [reset, soft_rst, nuke, pll_rst, mux_rst, i2c_rst]"
