@@ -17,7 +17,6 @@ echo "PATH= " $PATH
 cd $CURRENT_DIR
 
 echo "============"
-echo "STARTING PYTHON SCRIPT FOR TLU"
 
 
 #python startEUDETdummy.py $@

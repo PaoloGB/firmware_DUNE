@@ -26,6 +26,19 @@ class MyPrompt(cmd.Cmd):
             iSFP= results[0]
             hw_pc059a._sfpSelect(iSFP, 2, 0)
 
+    def do_i2c(self, args):
+        arglist = args.split()
+        if len(arglist) == 0:
+            print "\tno command specified"
+        else:
+            i2ccmd= arglist[0]
+            results = list(map(int, arglist))
+            hw_pc059a.DISP.writeSomething(results)
+            print "Sending i2c command to display"
+            
+        return
+
+
     def do_start(self, args):
     	"""Starts a PC059A run"""
     	print "COMMAND RECEIVED: START RUN"

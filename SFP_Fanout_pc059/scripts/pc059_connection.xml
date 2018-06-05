@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <connections>
-  <connection id="sfpfanout" uri="ipbusudp-2.0://192.168.200.28:50001"
-   address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180327_1314/addrtab/top.xml" />
+  <connection id="sfpfanout" uri="ipbusudp-2.0://192.168.200.32:50001"
+   address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
 </connections>

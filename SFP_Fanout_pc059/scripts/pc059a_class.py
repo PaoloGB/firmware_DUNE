@@ -17,6 +17,7 @@ from PCA9539PW import PCA9539PW # Library for serial line expander
 from E24AA025E48T import E24AA025E48T # Library for EEPROM
 from PCA9548ADW import PCA9548ADW # Library for I2C bus expander
 from ADN2814ACPZ import ADN2814ACPZ # Library for CDR chip
+from I2CDISP import LCD09052 #Library for display
 
 class pc059a:
     """docstring for PC059A DUNE FANOUT"""
@@ -34,7 +35,7 @@ class pc059a:
         self.i2c_master= I2CCore(self.hw, 10, 5, "io.i2c", None)
 
     # Instantiate a secondary I2C core for SFP cage (not working yet)
-        self.i2c_secondary= I2CCore(self.hw, 10, 5, "io.usfp_i2c", None)
+        #self.i2c_secondary= I2CCore(self.hw, 10, 5, "io.usfp_i2c", None)
 
     # Enable the I2C interface on enclustra
         enableCore= True #Only need to run this once, after power-up
@@ -75,6 +76,14 @@ class pc059a:
     # Instantiate CDR for upstream and multiplexer
         self.cdr_UPS=ADN2814ACPZ(self.i2c_master, 0x40)
         self.cdr_MUX=ADN2814ACPZ(self.i2c_master, 0x60)
+        
+    #Instantiate Display
+        doDisplaytest= False
+        if doDisplaytest:
+          self.DISP=LCD09052(self.i2c_master, 0x3A) #3A
+          self.DISP.clear()
+          self.DISP.test()
+        
 
 ##################################################################################################################################
 ##################################################################################################################################
@@ -211,7 +220,7 @@ class pc059a:
         """
         if  (0 <= iSFP <= 7):
             print "  ROUTING SIGNALS TO SFP #", iSFP
-            self.ipb_setMUXchannel(iSFP)
+            #self.ipb_setMUXchannel(iSFP)
             self.mux_I2C.setActiveChannel(iSFP)
             self._setEQ(iSFP, EQstate, verbose)
             self._sfpEnable(iSFP, True)
