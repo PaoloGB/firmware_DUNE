@@ -9,6 +9,8 @@ Scripts
 *.md~
 *.sh~
 *.*~
+*.tgz
+*.bkp
 
 ## Vivado auxiliary files
 vivado*.jou

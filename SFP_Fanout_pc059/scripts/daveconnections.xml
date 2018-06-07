@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<connections>
+   <connection id="DUNE_FANOUT" uri="ipbusudp-2.0://192.168.200.28:50001"
+    address_table="file://addrtab/top.xml" />
+   <connection id="DUNE_FANOUT_32" uri="ipbusudp-2.0://192.168.200.32:50001"
+    address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
+   <connection id="DUNE_FANOUT_33" uri="ipbusudp-2.0://192.168.200.33:50001"
+    address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
+   <connection id="DUNE_FANOUT_34" uri="ipbusudp-2.0://192.168.200.34:50001"
+    address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
+   <connection id="DUNE_FMC_MASTER"
+uri="ipbusudp-2.0://192.168.200.16:50001"
+    address_table="file://addrtab/top.xml" />
+   <connection id="DUNE_FMC_SLAVE" uri="ipbusudp-2.0://192.168.200.17:50001"
+    address_table="file://addrtab/top.xml" />
+   <connection id="DUNE_FMC_SIM" uri="ipbusudp-2.0://192.168.201.16:50001"
+    address_table="file://addrtab/top_sim.xml" />
+</connections> 

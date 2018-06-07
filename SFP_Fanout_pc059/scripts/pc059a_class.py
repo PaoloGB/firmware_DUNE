@@ -16,6 +16,7 @@ from AD5665R import AD5665R # Library for DAC
 from PCA9539PW import PCA9539PW # Library for serial line expander
 from E24AA025E48T import E24AA025E48T # Library for EEPROM
 from PCA9548ADW import PCA9548ADW # Library for I2C bus expander
+from SFPI2C import SFPI2C
 from ADN2814ACPZ import ADN2814ACPZ # Library for CDR chip
 from I2CDISP import LCD09052 #Library for display
 
@@ -73,17 +74,20 @@ class pc059a:
     # Instantiate I2C multiplexer
         self.mux_I2C=PCA9548ADW(self.i2c_master, 0x73)
 
+    # Instantiate a generic SFP transceiver for one of the 8 downstream
+        self.SFP_ds= SFPI2C(self.i2c_master, 0x50)
+
     # Instantiate CDR for upstream and multiplexer
         self.cdr_UPS=ADN2814ACPZ(self.i2c_master, 0x40)
         self.cdr_MUX=ADN2814ACPZ(self.i2c_master, 0x60)
-        
+
     #Instantiate Display
         doDisplaytest= False
         if doDisplaytest:
           self.DISP=LCD09052(self.i2c_master, 0x3A) #3A
           self.DISP.clear()
           self.DISP.test()
-        
+
 
 ##################################################################################################################################
 ##################################################################################################################################
@@ -341,13 +345,13 @@ class pc059a:
         res= self.hw.getNode("io.csr.ctrl.leds").read()
         self.hw.dispatch()
         return res
-        
+
     def ipb_allLEDs(self):
         self.ipb_setLED(0, 1)
         self.ipb_setLED(1, 1)
         self.ipb_setLED(2, 1)
         self._LEDallOn()
-        
+
 ##################################################################################################################################
 ##################################################################################################################################
 
@@ -406,7 +410,7 @@ class pc059a:
         print "\tI2C MUX (should be 0)", self.mux_I2C.getChannelStatus(True)
 
         print "  ", self.dev_name, " INITIALIZED"
-        
+
         self.ipb_allLEDs()
 
 ##################################################################################################################################

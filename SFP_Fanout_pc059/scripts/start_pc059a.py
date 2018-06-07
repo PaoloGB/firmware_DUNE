@@ -35,9 +35,17 @@ class MyPrompt(cmd.Cmd):
             results = list(map(int, arglist))
             hw_pc059a.DISP.writeSomething(results)
             print "Sending i2c command to display"
-            
+
         return
 
+    def do_readSFPpower(self, args):
+        """Reads SFP power using I2C"""
+    	print "COMMAND RECEIVED: READ SFP POWER"
+        print "SFP connected is", hw_pc059a.mux_I2C.getChannelStatus()
+        #hw_pc059a.SFP_ds.scanI2C()
+        print hw_pc059a.SFP_ds.getVendorId()
+        hw_pc059a.SFP_ds.getVendorPN()
+        return
 
     def do_start(self, args):
     	"""Starts a PC059A run"""
