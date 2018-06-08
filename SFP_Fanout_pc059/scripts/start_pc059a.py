@@ -35,7 +35,12 @@ class MyPrompt(cmd.Cmd):
             results = list(map(int, arglist))
             hw_pc059a.DISP.writeSomething(results)
             print "Sending i2c command to display"
-
+        return
+        
+    def do_enableAll(self, args):
+        for iSFP in range (0,8):
+            print "enabling SFP", iSFP
+            hw_pc059a._sfpEnable(iSFP, True)
         return
 
     def do_readSFPpower(self, args):
@@ -43,8 +48,15 @@ class MyPrompt(cmd.Cmd):
     	print "COMMAND RECEIVED: READ SFP POWER"
         print "SFP connected is", hw_pc059a.mux_I2C.getChannelStatus()
         #hw_pc059a.SFP_ds.scanI2C()
-        print hw_pc059a.SFP_ds.getVendorId()
-        hw_pc059a.SFP_ds.getVendorPN()
+        print "Vend ID:", hw_pc059a.SFP_ds.getVendorId()
+        print "Vend PN:", hw_pc059a.SFP_ds.getVendorPN()
+        print "Vend Name:", hw_pc059a.SFP_ds.getVendorName()
+        hw_pc059a.SFP_ds.getEncoding()
+        print "Transceiver code:", hw_pc059a.SFP_ds.getTransceiver()
+        hw_pc059a.SFP_ds.getConnector()
+        hw_pc059a.SFP_ds.getDiagnosticsType()
+        hw_pc059a.SFP_ds.getEnhancedOpt()
+        
         return
 
     def do_start(self, args):
