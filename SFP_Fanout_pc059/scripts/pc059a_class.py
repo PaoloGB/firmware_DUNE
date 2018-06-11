@@ -23,6 +23,7 @@ from I2CDISP import LCD09052 #Library for display
 class pc059a:
     """docstring for PC059A DUNE FANOUT"""
     def __init__(self, dev_name, man_file):
+        uhal.setLogLevelTo(uhal.LogLevel.NOTICE) ## Get rid of initial flood of IPBUS messages
         self.dev_name = dev_name
         self.manager= uhal.ConnectionManager(man_file)
         self.hw = self.manager.getDevice(self.dev_name)
