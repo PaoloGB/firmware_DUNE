@@ -2,11 +2,13 @@
 
 <connections>
   <connection id="sfpfanout" uri="ipbusudp-2.0://192.168.200.34:50001"
-   address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
+      address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
    <connection id="DUNE_FANOUT_32" uri="ipbusudp-2.0://192.168.200.32:50001"
-   address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
+      address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
    <connection id="DUNE_FANOUT_33" uri="ipbusudp-2.0://192.168.200.33:50001"
-   address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
+      address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
    <connection id="DUNE_FANOUT_34" uri="ipbusudp-2.0://192.168.200.34:50001"
-   address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
+      address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
+   <connection id="DUNE_FANOUT_65" uri="ipbusudp-2.0://192.168.200.65:50001"
+      address_table="file://./../../bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/addrtab/top.xml" />
 </connections>

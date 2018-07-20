@@ -48,7 +48,6 @@ class MyPrompt(cmd.Cmd):
         """Reads SFP power using I2C"""
     	print "COMMAND RECEIVED: READ SFP POWER"
         print "SFPs connected:", format(hw_pc059a.mux_I2C.getChannelStatus(), '#010b')
-        #hw_pc059a.SFP_ds.scanI2C()
         print "Vend ID:", hw_pc059a.SFP_ds.getVendorId()
         print "Vend PN:", hw_pc059a.SFP_ds.getVendorPN()
         print "Vend Name:", hw_pc059a.SFP_ds.getVendorName()

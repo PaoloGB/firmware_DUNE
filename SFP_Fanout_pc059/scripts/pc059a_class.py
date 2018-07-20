@@ -83,11 +83,13 @@ class pc059a:
         self.cdr_MUX=ADN2814ACPZ(self.i2c_master, 0x60)
 
     #Instantiate Display
-        doDisplaytest= False
+        doDisplaytest= True
         if doDisplaytest:
           self.DISP=LCD09052(self.i2c_master, 0x3A) #3A
           self.DISP.clear()
-          self.DISP.test()
+          #self.DISP.test2()
+          self.DISP.test2("192.168.200.XX", "DUNE FANOUT")
+          
 
 
 ##################################################################################################################################
