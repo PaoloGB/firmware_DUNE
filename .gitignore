@@ -18,3 +18,6 @@ vivado*.log
 vivado*.str
 
 work/
+bitFiles/pc059_test_excession_phy_bris_ac_uk_180605_1529/
+bitFiles/pc059_test_excession_phy_bris_ac_uk_180327_1314/
+bitFiles/monitor_pc059_maroc_phy_bris_ac_uk_180511_1426/
